@@ -8,7 +8,7 @@ const getAllPosts = async () => {
   let data;
   try {
     data = await db.any(
-      "SELECT post_id, title, content, posts.created_at, author_id, count(like_id) as likes FROM posts LEFT JOIN likes USING (post_id) GROUP BY posts.post_id ORDER BY created_at DESC"
+      "SELECT post_id, posts.content, posts.created_at, title, posts.author_id, COUNT (DISTINCT like_id) AS likes, COUNT (DISTINCT comment_id) AS comments FROM posts LEFT JOIN likes USING (post_id) LEFT JOIN comments USING (post_id) GROUP BY (posts.post_id) ORDER BY created_at DESC"
     );
   } catch (error) {
     throw new Error("Error:", error);

@@ -19,10 +19,17 @@ const getPostByPostIdAndByUserId = async (payload) => {
   const { userId, postId } = payload;
   let data;
   try {
-    data = await db.one(
-      "SELECT post_id, content, title, posts.created_at, author_id, COUNT(like_id) AS likes FROM posts LEFT JOIN likes USING (post_id) WHERE author_id = $1 AND post_id = $2 GROUP BY post_id;",
+    data = await db.multi(
+      "SELECT post_id, posts.content, posts.created_at, title, posts.author_id, COUNT (DISTINCT like_id) AS likes, COUNT (DISTINCT comment_id) AS comments FROM posts LEFT JOIN likes USING (post_id) LEFT JOIN comments USING (post_id) WHERE posts.author_id = $1 AND post_id = $2 GROUP BY post_id; SELECT comment_id, content, name, created_at FROM comments LEFT JOIN users on author_id = user_id WHERE post_id = $2;",
       [userId, postId]
     );
+
+    const formattedData = {
+      post: data[0][0],
+      comments: data[1],
+    };
+
+    data = formattedData;
   } catch (error) {
     throw new Error("Error:", error);
   }

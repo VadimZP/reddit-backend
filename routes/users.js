@@ -20,7 +20,7 @@ const getPostByPostIdAndByUserId = async (payload) => {
   let data;
   try {
     data = await db.multi(
-      "SELECT post_id, posts.content, posts.created_at, title, posts.author_id, COUNT (DISTINCT like_id) AS likes, COUNT (DISTINCT comment_id) AS comments FROM posts LEFT JOIN likes USING (post_id) LEFT JOIN comments USING (post_id) WHERE posts.author_id = $1 AND post_id = $2 GROUP BY post_id; SELECT comment_id, content, name, created_at FROM comments LEFT JOIN users on author_id = user_id WHERE post_id = $2;",
+      "SELECT post_id, posts.content, posts.created_at, title, posts.author_id, COUNT (DISTINCT like_id) AS likes, COUNT (DISTINCT comment_id) AS comments FROM posts LEFT JOIN likes USING (post_id) LEFT JOIN comments USING (post_id) WHERE posts.author_id = $1 AND post_id = $2 GROUP BY post_id; SELECT comment_id, content, name, parent_id, created_at FROM comments LEFT JOIN users on author_id = user_id WHERE post_id = $2;",
       [userId, postId]
     );
 
@@ -30,6 +30,27 @@ const getPostByPostIdAndByUserId = async (payload) => {
     };
 
     data = formattedData;
+  } catch (error) {
+    throw new Error("Error:", error);
+  }
+  return data;
+};
+
+const commentPost = async (payload) => {
+  const { postId, userId, parentId } = payload;
+  let data;
+  try {
+    if (parentId !== undefined) {
+      data = await db.oneOrNone(
+        "INSERT INTO comments (content, post_id, author_id, parent_id) values ('Test comment', $1, $2, $3)",
+        [postId, userId, parentId]
+      );
+      return;
+    }
+    data = await db.oneOrNone(
+      "INSERT INTO comments (content, post_id, author_id, parent_id) values ('Test comment', $1, $2, null)",
+      [postId, userId]
+    );
   } catch (error) {
     throw new Error("Error:", error);
   }
@@ -72,6 +93,11 @@ router.get("/:userId/posts", restrict, async (req, res) => {
 router.get("/:userId/posts/:postId", restrict, async (req, res) => {
   const data = await getPostByPostIdAndByUserId(req.params);
   res.status(200).json(data);
+});
+
+router.post("/:userId/posts/:postId/comments", restrict, async (req, res) => {
+  const data = await commentPost(req.body);
+  res.status(201).json(data);
 });
 
 router.post("/:userId/posts/:postId/likes", restrict, async (req, res) => {

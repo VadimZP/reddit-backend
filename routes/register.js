@@ -7,7 +7,7 @@ const findUser = async (payload) => {
   const { email, password } = payload;
   let data;
   try {
-    data = await db.one(
+    data = await db.oneOrNone(
       "SELECT user_id, email FROM users WHERE email = $1 AND password = crypt($2, password)",
       [email, password]
     );

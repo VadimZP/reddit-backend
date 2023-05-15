@@ -11,11 +11,11 @@ app.use("/login", login);
 app.use("/users", users);
 app.use("/posts", posts);
 
-function errorHandler(err, req, res, next) {
-  res.status(500).json({ message: "Server error" });
-}
+// function errorHandler(err, req, res, next) {
+//   res.status(500).json({ message: "Server error" });
+// }
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.listen(serverPort, () => {
   console.log(`App is listening on port ${serverPort}`);

@@ -8,7 +8,7 @@ const findUser = async (payload) => {
   let data;
   try {
     data = await db.one(
-      "SELECT user_id, email FROM users WHERE email = $1 AND password = crypt($2, password)",
+      "SELECT user_id, name, email FROM users WHERE email = $1 AND password = crypt($2, password)",
       [email, password]
     );
   } catch (error) {
@@ -20,7 +20,8 @@ const findUser = async (payload) => {
 router.post("/", async (req, res) => {
   const data = await findUser(req.body);
   if (data) {
-    req.session.user = data;
+    // req.session.user = data;
+    res.cookie('userId', data.user_id)
     res.status(200).json(data);
   } else {
     res.status(404).json({ message: "Incorrect data" });

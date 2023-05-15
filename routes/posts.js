@@ -31,6 +31,7 @@ const createPost = async (payload) => {
 };
 
 router.get("/", restrict, async (req, res) => {
+  console.log(req.session)
   const data = await getAllPosts();
   return res.status(200).json(data);
 });

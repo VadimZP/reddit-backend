@@ -1,9 +1,9 @@
 function restrict(req, res, next) {
-  if (req.session.user) {
+  // if (req.session.user) {
     next();
-  } else {
-    res.status(401).json({ message: "Invalid user credentials" });
-  }
+  // } else {
+  //   res.status(401).json({ message: "Invalid user credentials" });
+  // }
 }
 
 module.exports = { restrict };

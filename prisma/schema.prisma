@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int                  @id @default(autoincrement())
+  email          String               @unique
+  username       String               @unique @db.VarChar(16)
+  password       String
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+  ownCommunities Community[]
+  communities    CommunitiesMembers[]
+  posts          Post[]
+  votes          PostsVotes[]
+
+  @@map("users")
+}
+
+model Community {
+  id        Int                  @id @default(autoincrement())
+  title     String               @unique @db.VarChar(30)
+  createdAt DateTime             @default(now()) @map("creator_at")
+  creatorId Int                  @map("creator_id")
+  creator   User                 @relation(fields: [creatorId], references: [id])
+  members   CommunitiesMembers[]
+  posts     Post[]
+
+  @@map("communities")
+}
+
+model CommunitiesMembers {
+  memberId    Int       @map("member_id")
+  communityId Int       @map("community_id")
+  community   Community @relation(fields: [communityId], references: [id])
+  member      User      @relation(fields: [memberId], references: [id])
+
+  @@id([memberId, communityId])
+  @@map("communities_members")
+}
+
+model Post {
+  id          Int          @id @default(autoincrement())
+  title       String       @db.VarChar(100)
+  text        String
+  authorId    Int          @map("author_id")
+  communityId Int          @map("community_id")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  author      User         @relation(fields: [authorId], references: [id])
+  community   Community    @relation(fields: [communityId], references: [id])
+  votes       PostsVotes[]
+
+  @@map("posts")
+}
+
+model PostsVotes {
+  postId Int  @map("post_id")
+  userId Int  @map("user_id")
+  vote   Int  @db.SmallInt
+  post   Post @relation(fields: [postId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@id([postId, userId])
+  @@map("posts_votes")
+}

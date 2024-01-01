@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
@@ -28,7 +28,7 @@ app.use("/login", login);
 app.use("/users", users);
 app.use("/communities", communities);
 
-app.use((error: any, req: Request, res: Response) => {
+app.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
   const statusCode = error.statusCode || 500;
 
   res.status(statusCode).json({

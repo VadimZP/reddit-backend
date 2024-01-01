@@ -20,7 +20,6 @@ export const validate = (schema: Schema) => (req: Request, res: Response, next: 
   }
 };
 
-
 export const restrict = (req: Request, res: Response, next: NextFunction) => {
   if (!process.env.TOKEN_SECRET) {
     throw new CustomError("Internal server error", 500)
@@ -28,11 +27,11 @@ export const restrict = (req: Request, res: Response, next: NextFunction) => {
 
   const cookie = req.cookies.jwt;
 
-  if (!cookie) return res.status(401).json({ message: "Unauthenticated" });
+  if (!cookie) throw new CustomError("Unauthenticated", 401);
 
   // @ts-ignore TODO: fix typescript
   jwt.verify(cookie, process.env.TOKEN_SECRET, (err: any, data) => {
-    if (err) return res.sendStatus(403);
+    if (err) throw new CustomError("You don't have access", 403);
 
     // @ts-ignore TODO: fix typescript
     req.user = data;

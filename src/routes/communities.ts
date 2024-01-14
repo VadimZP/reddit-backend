@@ -25,6 +25,8 @@ router.post("/", [validate(createCommunitySchema), restrict], asyncErrorHandler(
     }
   })
 
+  // console.log(data)
+
   res.status(201).json(data);
 }));
 

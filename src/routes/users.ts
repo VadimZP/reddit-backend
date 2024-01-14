@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 
 import db from 'db';
 import CustomError from '@utils/CustomError';
@@ -7,7 +7,7 @@ import { restrict } from '@/middlewares';
 
 const router = express.Router();
 
-interface RequestWithUserData {
+interface RequestWithUserData extends Request {
   user: {
     _id: number, iat: number
   }
@@ -19,6 +19,20 @@ router.get("/", restrict, asyncErrorHandler(async (req: RequestWithUserData, res
   const data = await db.user.findUnique({
     where: {
       id: _id,
+    },
+  })
+
+  if (!data) throw new CustomError("User was not found", 404);
+
+  res.status(200).json(data);
+}));
+
+router.get("/:username", restrict, asyncErrorHandler(async (req: Request, res: Response) => {
+  const { username } = req.params;
+
+  const data = await db.user.findUnique({
+    where: {
+      username,
     },
   })
 

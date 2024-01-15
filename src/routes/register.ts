@@ -15,7 +15,6 @@ const RegisterSchema = z.object({
   }),
 });
 
-
 const router = express.Router();
 
 router.post("/", validate(RegisterSchema), asyncErrorHandler(async (req: Request, res: Response) => {

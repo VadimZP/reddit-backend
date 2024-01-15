@@ -8,11 +8,9 @@ import communities from '@routes/communities';
 import register from '@routes/register';
 import login from '@routes/login';
 
-
 dotenv.config();
 
 const app: Express = express()
-
 
 app.use(express.json());
 app.use(

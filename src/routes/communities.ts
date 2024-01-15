@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { z } from 'zod';
 
 import db from '@/db';
@@ -14,8 +14,7 @@ const createCommunitySchema = z.object({
 
 const router = express.Router();
 
-// @ts-ignore TODO: fix typescript
-router.post("/", [validate(createCommunitySchema), restrict], asyncErrorHandler(async (req, res) => {
+router.post("/", [validate(createCommunitySchema), restrict], asyncErrorHandler(async (req: Request, res: Response) => {
   const { creatorId, title } = req.body;
 
   const data = await db.community.create({
@@ -24,8 +23,6 @@ router.post("/", [validate(createCommunitySchema), restrict], asyncErrorHandler(
       creatorId
     }
   })
-
-  // console.log(data)
 
   res.status(201).json(data);
 }));

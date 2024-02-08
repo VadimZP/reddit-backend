@@ -15,7 +15,7 @@ interface RequestWithUserData extends Request {
 }
 
 router.get("/", restrict, asyncErrorHandler(async (req: Request, res: Response) => {
-  // @ts-ignore TODO: fix typescript
+  // @ts-ignore TODO:fix typescript
   const { _id } = req.user;
 
   const data = await db.user.findUnique({
@@ -52,16 +52,24 @@ const getCommunitiesSchema = z.object({
 
 
 router.get("/:userId/communities", [validate(getCommunitiesSchema), restrict], asyncErrorHandler(async (req: Request, res: Response) => {
-  // @ts-ignore
   const { userId } = req.params;
 
-  const data = await db.community.findMany({
+  const userCommunities = await db.communitiesMembers.findMany({
     where: {
-      creatorId: +userId
-    }
+      memberId: +userId,
+    },
+    select: {
+      community: {
+        select: {
+          id: true,
+          title: true,
+          creatorId: true
+        }
+      },
+    },
   })
 
-  res.status(200).json(data);
+  res.status(200).json(userCommunities);
 }));
 
 

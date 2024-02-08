@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -8,16 +9,17 @@ datasource db {
 }
 
 model User {
-  id             Int                  @id @default(autoincrement())
-  email          String               @unique
-  username       String               @unique @db.VarChar(16)
-  password       String
-  createdAt      DateTime             @default(now()) @map("created_at")
-  updatedAt      DateTime             @updatedAt @map("updated_at")
-  ownCommunities Community[]
-  communities    CommunitiesMembers[]
-  posts          Post[]
-  votes          PostsVotes[]
+  id          Int                  @id @default(autoincrement())
+  email       String               @unique
+  username    String               @unique @db.VarChar(16)
+  password    String
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+  communities CommunitiesMembers[]
+  posts       Post[]
+  votes       PostsVotes[]
+  Community   Community[]
+  Comment     Comment[]
 
   @@map("users")
 }
@@ -54,6 +56,8 @@ model Post {
   author      User         @relation(fields: [authorId], references: [id])
   community   Community    @relation(fields: [communityId], references: [id])
   votes       PostsVotes[]
+  // PostsComments PostsComments[]
+  Comment     Comment[]
 
   @@map("posts")
 }
@@ -67,4 +71,16 @@ model PostsVotes {
 
   @@id([postId, userId])
   @@map("posts_votes")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  authorId  Int      @map("author_id")
+  postId    Int      @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  author    User     @relation(fields: [authorId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@map("comments")
 }

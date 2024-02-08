@@ -26,7 +26,23 @@ router.post("/", asyncErrorHandler(async (req: Request, res: Response, next: Nex
 
   res.cookie('jwt', token, {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000
+    maxAge: 24 * 60 * 60 * 1000,
+    path: '/',
+    sameSite: 'lax'
+  })
+
+  res.cookie('userId', data.id, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    path: '/',
+    sameSite: 'lax'
+  })
+
+  res.cookie('username', data.username, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    path: '/',
+    sameSite: 'lax'
   })
 
   const { password, ...rest } = data;

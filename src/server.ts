@@ -8,7 +8,7 @@ import communities from '@routes/communities';
 import register from '@routes/register';
 import login from '@routes/login';
 import posts from '@routes/posts';
-import comments from '@routes/comments';
+// import comments from '@routes/comments';
 
 dotenv.config();
 
@@ -29,7 +29,7 @@ app.use("/login", login);
 app.use("/users", users);
 app.use("/communities", communities);
 app.use("/posts", posts);
-app.use("/comments", comments);
+// app.use("/comments", comments);
 
 app.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
   const statusCode = error.statusCode || 500;

@@ -76,6 +76,7 @@ model PostsVotes {
 model Comment {
   id        Int      @id @default(autoincrement())
   text      String
+  parentId  Int?
   authorId  Int      @map("author_id")
   postId    Int      @map("post_id")
   createdAt DateTime @default(now()) @map("created_at")
@@ -84,3 +85,19 @@ model Comment {
 
   @@map("comments")
 }
+
+// model Comment {
+//   id       Int    @id @default(autoincrement())
+//   path     String @unique
+//   depth    Int
+//   numchild Int    @default(0)
+
+//   text      String
+//   authorId  Int      @map("author_id")
+//   postId    Int      @map("post_id")
+//   createdAt DateTime @default(now()) @map("created_at")
+//   author    User     @relation(fields: [authorId], references: [id])
+//   post      Post     @relation(fields: [postId], references: [id])
+
+//   @@index([path])
+// }
